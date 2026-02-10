@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Mini Zomato</title>
+
+<style>
+body {
+	font-family: Arial, sans-serif;
+	background: #f4f6fb;
+	margin: 0;
+}
+
+/* Welcome */
+.welcome-bar {
+	text-align: center;
+	font-size: 32px;
+	font-weight: 700;
+	padding: 25px;
+	color: #ff6f00;
+}
+
+/* Main tables */
+table {
+	width: 85%;
+	margin: 25px auto;
+	border-collapse: collapse;
+	background: white;
+	border-radius: 16px;
+	overflow: hidden;
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+th {
+	background: linear-gradient(135deg, #ff7a18, #ffb347);
+	color: white;
+	padding: 14px;
+	font-size: 16px;
+}
+
+td {
+	padding: 14px;
+	text-align: center;
+}
+
+/* Food images */
+img {
+	width: 85px;
+	border-radius: 12px;
+}
+
+/* Inputs */
+input[type="number"] {
+	width: 70px;
+	padding: 6px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+	text-align: center;
+}
+
+/* Buttons */
+button {
+	background: #28a745;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: 0.3s;
+}
+
+button:hover {
+	background: #218838;
+}
+
+/* Section titles */
+h3 {
+	text-align: center;
+	margin-top: 30px;
+}
+
+/* Grand total highlight */
+h3 span {
+	color: #ff5722;
+	font-size: 22px;
+}
+
+/* Payment */
+.payment-box {
+	text-align: center;
+	margin: 15px 0;
+}
+
+label {
+	font-size: 16px;
+}
+
+/* Action buttons */
+.action-box {
+	text-align: center;
+	margin: 25px 0;
+}
+
+.clear-btn {
+	background: #dc3545;
+}
+
+.clear-btn:hover {
+	background: #c82333;
+}
+</style>
+</head>
+
+<body>
+
+	<!-- Welcome -->
+
+	<div class="welcome-bar">
+		Welcome <span id="menuUser"></span> 🙏
+	</div>
+
+	<script>
+document.getElementById("menuUser").textContent =
+    localStorage.getItem("customerName");
+</script>
+
+	<!-- MENU TABLE -->
+
+	<table>
+		<tr>
+			<th>Image</th>
+			<th>Food</th>
+			<th>Price</th>
+			<th>Qty</th>
+			<th>Add</th>
+		</tr>
+
+		<tr th:each="item : ${menu}">
+			<td><img th:src="@{'/images/' + ${item.image}}"></td>
+
+			<td th:text="${item.name}"></td>
+
+			<td>₹ <span th:text="${item.price}"></span></td>
+
+			<td>
+				<form th:action="@{/add}" method="post">
+					<input type="hidden" name="foodId" th:value="${item.id}"> <input
+						type="number" name="quantity" value="1" min="1">
+			</td>
+
+			<td>
+				<button type="submit">Add</button>
+				</form>
+			</td>
+		</tr>
+	</table>
+
+	<!-- CART -->
+
+	<h3>Cart</h3>
+
+	<table>
+		<tr>
+			<th>Item</th>
+			<th>Qty</th>
+			<th>Total</th>
+		</tr>
+
+		<tr th:each="c : ${cart}">
+			<td th:text="${c.foodName}"></td>
+			<td th:text="${c.quantity}"></td>
+			<td th:text="${c.total}"></td>
+		</tr>
+	</table>
+
+	<h3>
+		Grand Total: ₹ <span th:text="${total}"></span>
+	</h3>
+
+	<!-- PAYMENT -->
+
+	<h3>Payment Method</h3>
+
+	<div class="payment-box">
+		<label> <input type="radio" name="payment" value="PAID"
+			checked> Pay Now
+		</label> <label style="margin-left: 25px;"> <input type="radio"
+			name="payment" value="NOT_PAID"> Pay Later
+		</label>
+	</div>
+
+	<!-- ACTIONS -->
+
+	<div class="action-box">
+
+		<form action="/finalBill" method="post" style="display: inline;">
+			<input type="hidden" name="total" id="grandTotal"> <input
+				type="hidden" name="paymentStatus" id="paymentStatus">
+			<button type="submit">Save Bill</button>
+		</form>
+
+		<form action="/clear" method="post" style="display: inline;">
+			<button type="submit" class="clear-btn">Clear Cart</button>
+		</form>
+
+	</div>
+
+	<script>
+document.querySelectorAll('input[name="payment"]').forEach(radio => {
+    radio.addEventListener("change", function() {
+        document.getElementById("paymentStatus").value = this.value;
+    });
+});
+
+document.getElementById("paymentStatus").value = "PAID";
+</script>
+
+</body>
+</html>

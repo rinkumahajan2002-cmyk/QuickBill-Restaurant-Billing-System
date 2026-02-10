@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Welcome</title>
+
+<style>
+body {
+	margin: 0;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: linear-gradient(135deg, #ffb6b9, #fad0c4);
+	font-family: Arial, sans-serif;
+}
+
+.container {
+	background: white;
+	padding: 45px;
+	border-radius: 18px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+	text-align: center;
+	width: 420px;
+}
+
+.title {
+	font-size: 32px;
+	font-weight: bold;
+	color: #ff5722;
+	margin-bottom: 25px;
+}
+
+label {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+input {
+	width: 100%;
+	padding: 12px;
+	margin-top: 6px;
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	font-size: 16px;
+}
+
+button {
+	margin-top: 20px;
+	padding: 12px 35px;
+	border: none;
+	border-radius: 10px;
+	background: #28a745;
+	color: white;
+	font-size: 18px;
+	cursor: pointer;
+}
+
+button:hover {
+	background: #1e7e34;
+}
+
+.welcome {
+	margin-top: 25px;
+	font-size: 24px;
+	font-weight: bold;
+	color: #6a1b9a;
+}
+</style>
+</head>
+
+<body>
+
+	<div class="container">
+
+		<div class="title">🍔 Welcome To Shop</div>
+
+		<form th:action="@{/saveCustomer}" th:object="${customer}"
+			method="post" onsubmit="saveName()">
+
+			<label>Name</label> <input type="text" id="nameInput"
+				th:field="*{name}" required>
+
+			<button type="submit">Continue</button>
+
+			<div class="welcome">
+				Welcome <span id="liveName"></span> 🙏
+			</div>
+
+		</form>
+
+	</div>
+
+	<script>
+		const input = document.getElementById("nameInput");
+
+		input.addEventListener("input", function() {
+			document.getElementById("liveName").textContent = this.value;
+		});
+
+		function saveName() {
+			localStorage.setItem("customerName", input.value);
+		}
+	</script>
+
+</body>
+</html>
